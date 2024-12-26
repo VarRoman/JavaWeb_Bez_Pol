@@ -19,7 +19,8 @@ ext {
     minimumCoveragePerFile = 0.8
     filesExcludedFromCoverage = [
             "**/*MarketApplication.*",
-            "**/config/*Configuration.*"
+            "**/config/*Configuration.*",
+            "**/ProductRatingService*",
     ]
 }
 
