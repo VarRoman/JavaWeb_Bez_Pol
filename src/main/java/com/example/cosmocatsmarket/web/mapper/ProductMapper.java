@@ -23,6 +23,7 @@ public interface ProductMapper {
     @Mapping(target = "name", source = "name")
     @Mapping(target = "description", source = "description")
     @Mapping(target = "price", source = "price")
+    @Mapping(target = "rating", ignore = true)
     ProductEntry toProductEntry(Product product);
 
     List<ProductEntry> toProductEntries(List<Product> products);

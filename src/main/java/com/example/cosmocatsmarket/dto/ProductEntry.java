@@ -1,12 +1,12 @@
 package com.example.cosmocatsmarket.dto;
 
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 
 import java.util.UUID;
 
-@Value
+@Data
 @Builder
 @Jacksonized
 public class ProductEntry {
@@ -14,4 +14,5 @@ public class ProductEntry {
     String name;
     String description;
     Double price;
+    Float rating;
 }

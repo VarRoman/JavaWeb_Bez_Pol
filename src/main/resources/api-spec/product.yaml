@@ -10,6 +10,13 @@ paths:
       summary: Get all products
       tags:
         - Products
+      parameters:
+        - name: with-rating
+          in: query
+          description: Get rating for products
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: List of all products
@@ -17,6 +24,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProductListDto'
+
     post:
       summary: Create a new product
       tags:
@@ -54,6 +62,12 @@ paths:
           schema:
             type: integer
           description: ID of the product to retrieve
+        - name: with-rating
+          in: query
+          description: Get rating for products
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Product found

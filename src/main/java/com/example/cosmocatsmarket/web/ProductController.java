@@ -3,6 +3,7 @@ package com.example.cosmocatsmarket.web;
 import com.example.cosmocatsmarket.dto.ProductDto;
 import com.example.cosmocatsmarket.dto.ProductEntry;
 import com.example.cosmocatsmarket.dto.ProductListDto;
+import com.example.cosmocatsmarket.service.ProductRatingService;
 import com.example.cosmocatsmarket.service.ProductService;
 import com.example.cosmocatsmarket.web.mapper.ProductMapper;
 import jakarta.validation.Valid;
@@ -18,20 +19,32 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
+    private final ProductRatingService productRatingService;
 
-    public ProductController(ProductService productService, ProductMapper productMapper) {
+    public ProductController(ProductService productService, ProductMapper productMapper, ProductRatingService productRatingService) {
         this.productService = productService;
         this.productMapper = productMapper;
+        this.productRatingService = productRatingService;
     }
 
     @GetMapping
-    ResponseEntity<ProductListDto> getAll() {
-        return ResponseEntity.ok(productMapper.toProductListDto(productService.getAllProducts()));
+    ResponseEntity<ProductListDto> getAll(@RequestParam(name = "with-rating", required = false) boolean withRating) {
+        ProductListDto productListDto = productMapper.toProductListDto(productService.getAllProducts());
+        if (withRating) {
+           for (ProductEntry productEntry : productListDto.getProductEntries()) {
+               productEntry.setRating(productRatingService.getRating(productEntry.getId()));
+           }
+        }
+        return ResponseEntity.ok(productListDto);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<ProductEntry> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(productMapper.toProductEntry(productService.getProductById(id)));
+    ResponseEntity<ProductEntry> getById(@PathVariable UUID id, @RequestParam(name = "with-rating", required = false) boolean withRating) {
+        ProductEntry productEntry = productMapper.toProductEntry(productService.getProductById(id));
+        if (withRating) {
+            productEntry.setRating(productRatingService.getRating(productEntry.getId()));
+        }
+        return ResponseEntity.ok(productEntry);
     }
 
     @PostMapping
