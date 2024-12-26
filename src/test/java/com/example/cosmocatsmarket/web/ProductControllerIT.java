@@ -1,6 +1,8 @@
 package com.example.cosmocatsmarket.web;
 
+import com.example.cosmocatsmarket.domain.Product;
 import com.example.cosmocatsmarket.dto.ProductDto;
+import com.example.cosmocatsmarket.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.UUID;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,6 +29,8 @@ public class ProductControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ProductService productService;
 
     @Test
     @SneakyThrows
@@ -35,14 +42,15 @@ public class ProductControllerIT {
     @Test
     @SneakyThrows
     void shouldGetProductById() throws Exception {
-        mockMvc.perform(get("/api/v1/products/1"))
+        Product product = productService.getAllProducts().getFirst();
+        mockMvc.perform(get("/api/v1/products/" + product.getId()))
                 .andExpect(status().isOk());
     }
 
     @Test
     @SneakyThrows
     void shouldGetNotFound() throws Exception {
-        mockMvc.perform(get("/api/v1/products/99"))
+        mockMvc.perform(get("/api/v1/products/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
 
@@ -79,7 +87,8 @@ public class ProductControllerIT {
     @Test
     @SneakyThrows
     void shouldUpdateProduct() throws Exception {
-        mockMvc.perform(put("/api/v1/products/1")
+        Product product = productService.getAllProducts().getFirst();
+        mockMvc.perform(put("/api/v1/products/" + product.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(PRODUCT_DTO)))
                 .andExpect(status().isCreated());
@@ -88,7 +97,7 @@ public class ProductControllerIT {
     @Test
     @SneakyThrows
     void shouldUpdateNotFound() throws Exception {
-        mockMvc.perform(put("/api/v1/products/99")
+        mockMvc.perform(put("/api/v1/products/" + UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(PRODUCT_DTO)))
                 .andExpect(status().isNotFound());
@@ -97,7 +106,8 @@ public class ProductControllerIT {
     @Test
     @SneakyThrows
     void shouldUpdateBadRequest() throws Exception {
-        mockMvc.perform(put("/api/v1/products/1")
+        Product product = productService.getAllProducts().getFirst();
+        mockMvc.perform(put("/api/v1/products/" + product.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(BAD_PRODUCT_DTO)))
                 .andExpect(status().isBadRequest());
@@ -106,7 +116,8 @@ public class ProductControllerIT {
     @Test
     @SneakyThrows
     void shouldDeleteProduct() throws Exception {
-        mockMvc.perform(delete("/api/v1/products/2"))
+        Product product = productService.getAllProducts().getFirst();
+        mockMvc.perform(delete("/api/v1/products/" + product.getId()))
                 .andExpect(status().isNoContent());
     }
 }

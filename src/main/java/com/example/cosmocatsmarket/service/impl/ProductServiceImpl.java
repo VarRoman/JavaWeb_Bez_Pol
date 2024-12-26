@@ -7,37 +7,38 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     private final List<Product> products = new ArrayList<>(List.of(
             Product.builder()
-                    .id(1L)
+                    .id(UUID.randomUUID())
                     .name("Cosmos Laptop")
                     .description("High-performance laptop with cosmic speed")
                     .price(999.99)
                     .build(),
             Product.builder()
-                    .id(2L)
+                    .id(UUID.randomUUID())
                     .name("Space Phone")
                     .description("Smartphone with interstellar connectivity")
                     .price(799.99)
                     .build(),
             Product.builder()
-                    .id(3L)
+                    .id(UUID.randomUUID())
                     .name("Galaxy Headphones")
                     .description("Noise-cancelling headphones with galactic sound")
                     .price(199.99)
                     .build(),
             Product.builder()
-                    .id(4L)
+                    .id(UUID.randomUUID())
                     .name("Star Tablet")
                     .description("Tablet with stellar display")
                     .price(499.99)
                     .build(),
             Product.builder()
-                    .id(5L)
+                    .id(UUID.randomUUID())
                     .name("Nebula Camera")
                     .description("Camera with nebula-level resolution")
                     .price(299.99)
@@ -50,23 +51,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProductById(Long id) {
+    public Product getProductById(UUID id) {
         return products.stream().filter(p -> p.getId().equals(id)).findFirst().orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @Override
     public Product createProduct(Product product) {
-        Long id = products.stream()
-                .mapToLong(Product::getId)
-                .max()
-                .orElse(0L) + 1L;
+        UUID id = UUID.randomUUID();
         product.setId(id);
         products.add(product);
         return product;
     }
 
     @Override
-    public Product updateProduct(Long id, Product product) {
+    public Product updateProduct(UUID id, Product product) {
         if (products.removeIf(p -> p.getId().equals(id))) {
             product.setId(id);
             products.add(product);
@@ -77,7 +75,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProductById(Long id) {
+    public void deleteProductById(UUID id) {
         products.removeIf(p -> p.getId().equals(id));
     }
 }

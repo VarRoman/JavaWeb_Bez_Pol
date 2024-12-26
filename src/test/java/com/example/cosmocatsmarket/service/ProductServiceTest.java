@@ -7,6 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.UUID;
+
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -31,12 +34,13 @@ public class ProductServiceTest {
 
     @Test
     void getProductById() {
-        assertNotNull(productService.getProductById(1L));
+        Product product = productService.getAllProducts().getFirst();
+        assertNotNull(productService.getProductById(product.getId()));
     }
 
     @Test
     void getProductNotFound() {
-        assertThrows(ProductNotFoundException.class, () -> productService.getProductById(-1L));
+        assertThrows(ProductNotFoundException.class, () -> productService.getProductById(UUID.randomUUID()));
     }
 
     @Test
@@ -46,18 +50,20 @@ public class ProductServiceTest {
 
     @Test
     void updateProduct() {
-        assertNotNull(productService.updateProduct(2L, DEFAULT_PRODUCT));
+        Product product = productService.getAllProducts().getFirst();
+        assertNotNull(productService.updateProduct(product.getId(), DEFAULT_PRODUCT));
     }
 
     @Test
     void updateProductNotFound() {
-        assertThrows(ProductNotFoundException.class, () -> productService.updateProduct(-1L, DEFAULT_PRODUCT));
+        assertThrows(ProductNotFoundException.class, () -> productService.updateProduct(UUID.randomUUID(), DEFAULT_PRODUCT));
     }
 
 
     @Test
     void deleteProduct() {
-        productService.deleteProductById(3L);
-        assertThrows(ProductNotFoundException.class, () -> productService.getProductById(3L));
+        Product product = productService.getAllProducts().getFirst();
+        productService.deleteProductById(product.getId());
+        assertThrows(ProductNotFoundException.class, () -> productService.getProductById(product.getId()));
     }
 }
